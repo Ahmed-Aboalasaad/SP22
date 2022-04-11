@@ -9,12 +9,30 @@ using namespace std;
 
 
 // FUNCTIONS prototypes
+// DINA
 void editInfo();
+
+// ABO
+void findDoctor();
+void timeFilter();
+void majorFilter();
+
+// Safa
+void viewAppointments();
+void editPatientInfo();
+
+// Seif
+void deleteAppointments();
+void clearAppointments();
+void editAppointment();
+
 
 // STRUCTS
 struct dateStruct
 {
-	int day = 0, month = 0, year = 2020;
+	int day = 0,
+		month = 0, 
+		year = 2022;
 };
 
 struct timeStruct
@@ -27,14 +45,14 @@ struct appointment
 {
 	string patientName, doctorName;
 	timeStruct time;
-} appointments[50];
+};
 
 struct patient
 {
 	string name, password;
 	dateStruct DOB;
 	appointment appointments[20];
-} patients[50];
+};
 
 struct doctor
 {
@@ -46,7 +64,7 @@ struct doctor
 int main() {
 
 	char ans;
-	cout << "------------ Welcome om E7gezly ------------";
+	cout << "------------ Welcome om E7gezly ------------\n";
 
 	// GEHAD : (SIGN UP OR LOG IN)
 	cout << " as a doctor or patient?";
@@ -113,6 +131,8 @@ int main() {
 			// GEHAD, make it case-insensetive checking, please
 		} while (order == "h" || order == "H" || order == "home" || order == "Home");
 
+	} else if (ans == 'p' || ans == 'P') {
+		
 	}
 
 
