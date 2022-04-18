@@ -56,7 +56,7 @@ struct patient
 
 struct doctor
 {
-	string name, password;
+	string name, password, major;
 	appointment appointments[20];
 } drAli;
 
@@ -71,8 +71,8 @@ int main() {
 	cin >> ans;
 	if (ans == 'd' || ans == 'D') {
 		cout << "1. Edit available time" << endl              // MALAK
-			<< "2. Display your appointments" << endl     // MAYAR
-			<< "3. Edit you info" << endl;                    // DINA
+			 << "2. Display your appointments" << endl     // MAYAR
+			 << "3. Edit you info" << endl;                    // DINA
 
 		char service;
 		cin >> service;
@@ -109,12 +109,12 @@ int main() {
 				cout << "------------ appointments of dr." << drAli.name << " ------------\n";
 				for (int i = 0; i < 20; i++) {
 					cout << "patient name : " << drAli.appointments[i].patientName
-						<< "\ntime : "
-						<< drAli.appointments[i].time.date.day
-						<< drAli.appointments[i].time.date.month
-						<< drAli.appointments[i].time.date.year
-						<< drAli.appointments[i].time.hour
-						<< drAli.appointments[i].time.minute << endl;
+						 << "\ntime : "
+						 << drAli.appointments[i].time.date.day
+						 << drAli.appointments[i].time.date.month
+						 << drAli.appointments[i].time.date.year
+						 << drAli.appointments[i].time.hour
+						 << drAli.appointments[i].time.minute << endl;
 				}
 			}
 
@@ -128,7 +128,7 @@ int main() {
 				<< "1. Go back to the main menu? ( h / H / home )";
 			cin >> order;
 
-			// GEHAD, make it case-insensetive checking, please
+			// GEHAD, make it case-insensetive checking ,please
 		} while (order == "h" || order == "H" || order == "home" || order == "Home");
 
 	} else if (ans == 'p' || ans == 'P') {
@@ -137,4 +137,8 @@ int main() {
 
 
 	return 0;
+}
+
+void findDoctor() {
+
 }
