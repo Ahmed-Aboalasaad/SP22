@@ -22,9 +22,12 @@ void viewAppointments();
 void editPatientInfo();
 
 // Seif
+void addAppointment();
+void editAppointment();
 void deleteAppointments();
 void clearAppointments();
-void editAppointment();
+
+
 
 
 // STRUCTS
