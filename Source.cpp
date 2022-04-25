@@ -13,9 +13,9 @@ using namespace std;
 void editInfo();
 
 // ABO
-void findDoctor();
+void findDoctor(string patientName);
 void timeFilter();
-void majorFilter();
+void majorFilter(string patientName);
 
 // Safa
 void viewAppointments();
@@ -27,6 +27,8 @@ void editAppointment();
 void deleteAppointments();
 void clearAppointments();
 
+// MALAK
+void addAbailableTime(string doctorName);
 
 
 
@@ -34,7 +36,7 @@ void clearAppointments();
 struct dateStruct
 {
 	int day = 0,
-		month = 0, 
+		month = 0,
 		year = 2022;
 };
 
@@ -60,7 +62,11 @@ struct patient
 struct doctor
 {
 	string name, password, major;
+
+	// 168 half hour a week (0 -> not available || 1 -> avaialble || 2 -> reserved)
+	short int weekBlocks[168] = { 0 };  // all zeroes by default
 	appointment appointments[20];
+	timeStruct availableTime[14];  // start & end of his/her abailable time for a week
 } drAli;
 
 
@@ -74,8 +80,8 @@ int main() {
 	cin >> ans;
 	if (ans == 'd' || ans == 'D') {
 		cout << "1. Edit available time" << endl              // MALAK
-			 << "2. Display your appointments" << endl     // MAYAR
-			 << "3. Edit you info" << endl;                    // DINA
+			<< "2. Display your appointments" << endl     // MAYAR
+			<< "3. Edit you info" << endl;                    // DINA
 
 		char service;
 		cin >> service;
@@ -112,12 +118,12 @@ int main() {
 				cout << "------------ appointments of dr." << drAli.name << " ------------\n";
 				for (int i = 0; i < 20; i++) {
 					cout << "patient name : " << drAli.appointments[i].patientName
-						 << "\ntime : "
-						 << drAli.appointments[i].time.date.day
-						 << drAli.appointments[i].time.date.month
-						 << drAli.appointments[i].time.date.year
-						 << drAli.appointments[i].time.hour
-						 << drAli.appointments[i].time.minute << endl;
+						<< "\ntime : "
+						<< drAli.appointments[i].time.date.day
+						<< drAli.appointments[i].time.date.month
+						<< drAli.appointments[i].time.date.year
+						<< drAli.appointments[i].time.hour
+						<< drAli.appointments[i].time.minute << endl;
 				}
 			}
 
@@ -134,16 +140,34 @@ int main() {
 			// GEHAD, make it case-insensetive checking ,please
 		} while (order == "h" || order == "H" || order == "home" || order == "Home");
 
-	} else if (ans == 'p' || ans == 'P') {
-		
+	}
+	else if (ans == 'p' || ans == 'P') {
+
 	}
 
 
 	return 0;
 }
 
-void findDoctor() {
-
+void findDoctor(string patientName) {
+	cout << "Search by :\n1.Major\n2. Major & Available Time\n";
+	char response;
+	cin >> response;
+	if (response == '1') {
+		majorFilter(patientName);
+	}
 }
 
-//Here!
+void addAbailableTime(doctor doctor) {
+	// which day to set its available time ?
+	cout << "Abailable Time: \nDay: ";
+	cin >> doctor.availableTime[0].date.day;
+	// the start & end of your available time are in the same day
+	doctor.availableTime[1].date.day = doctor.availableTime[0].date.day;
+
+	// in that day your are available from .. to ..
+	cout << "From: (use blocks of hours or half hours)";
+	cin >> doctor.availableTime[0].hour;
+	cout << "To: (use blocks of hours or half hours)";
+	cin >> doctor.availableTime[1].hour;
+}
