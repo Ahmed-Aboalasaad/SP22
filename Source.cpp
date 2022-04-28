@@ -23,7 +23,7 @@ struct timeStruct
 	bool Available = true;
 	dateStruct date;
 	int hour = 0, minute = 0;
-}change;
+};
 
 struct appointment
 {
@@ -175,6 +175,7 @@ void doctorMenu(doctor darr[],int j)
 void editAvailableTime(doctor darr[], int j)
 {
 
+	timeStruct change;
 	// Obtain the old appointment
 	cout << "Please enter the old appointment you want to change: date(day month year), hour, minute\n";
 	cin >> change.date.day >> change.date.month >> change.date.year >> change.hour >> change.minute;
