@@ -57,8 +57,8 @@ void patientMenu();
 void editInfo(doctor darr[], int j, int doctorNum);
 
 // ABO
-void findDoctor(doctor darr[], int patientIndex);
-void timeFilter(doctor darr[], int patientIndex, int* result);
+void findDoctor(doctor darr[], int patientIndex, int doctorNum);
+void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize, int doctorNum);
 
 // Safa
 void displayPatientAppointments();
@@ -340,7 +340,7 @@ void patientMenu(patient parr[], doctor darr[], int i) {  // parr -> array of pa
 
 }
 
-void findDoctor (doctor darr[], int patientIndex) {
+void findDoctor (doctor darr[], int patientIndex, int resultSize, int doctorNum) {
 	// search by major
 	cout << "Choose a Major: \n"
 		<< "1. Dentist\t\t2. Pediatrician\n"
@@ -405,7 +405,7 @@ void findDoctor (doctor darr[], int patientIndex) {
 	do {
 		cin >> response;
 		if (response == "y" || response == "Y")
-			timeFilter(darr, patientIndex, ptr1);
+			timeFilter(darr, patientIndex, ptr1, size, doctorNum);
 		
 		else if (response == "n" || response == "N") {
 			cout << "which doctor do you want to make an appointment with?\n";
@@ -428,20 +428,44 @@ void findDoctor (doctor darr[], int patientIndex) {
 	// improve the intelligence of your search later ,dude!
 }
 
-void timeFilter(doctor darr[], int patientIndex, int* result) {
+void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize, int doctorNum) {
 	// what's your desired time for your appointment
-	timeStruct start, end;
+	timeStruct timeHolder;
 	cout << "You are searching for an appointment :\nat (month day hour minute): ";
-	cin >> start.date.month >> start.date.day >> start.hour >> start.minute;
+	cin >> timeHolder.date.month >> timeHolder.date.day >> timeHolder.hour >> timeHolder.minute;
 
 	// compare appointments with the patient's time
 	// for every doctor
-	for () {
+	for (int i = 0; i < resultSize; i++) {
 		// for his appointments
-		for () {
-
+		for (int j = 0; j < 20; j++) { // taking the index of the result array, accessing the doctor with it and compare with the desired time the user gave me
+			if (timeHolder.date.month == darr[result[i]].DRappointments[j].time.date.month &&
+				timeHolder.date.day == darr[result[i]].DRappointments[j].time.date.day &&
+				timeHolder.hour == darr[result[i]].DRappointments[j].time.hour &&
+				timeHolder.minute == darr[result[i]].DRappointments[j].time.minute &&
+				darr[result[i]].DRappointments[j].time.Available == true) {
+				break; 
+			}
+			
+			result[i] = -1;
 		}
 	}
+
+	// now, print the doctors any value other than -1
+	int counter = 1;
+	cout << "\n--------After Filteration--------\n"
+		<< "Id\t\tName";
+	for (int i = 0; i < resultSize; i++) {
+		if (result[i] != -1) {
+				cout << counter++ << ". " << darr[result[i]].name << result[i] << endl;
+				// alternative solution : make a function to "shift" the rest of the dynamic array
+		}
+	}
+	int doctorID;
+	cout << "Enter the ID you chose :";
+	cin >> doctorID;
+
+	addAppointment(doctorID, patientIndex);
 }
 
 void editInfo(doctor darr[], int doctorIndex, int doctorNum)
@@ -481,61 +505,130 @@ void editInfo(doctor darr[], int doctorIndex, int doctorNum)
 			}
 
 		}
-
-
+		break;
 	}
 
-
-	case 2:
+	case 2: // add a do while loop to give the user another chance to enter a name
 	{
-		cout << "Please enter the old username you want to change: \n";
-		cin >> change;
-
-		// loop over this doctor's database to find the old one
-		for (int i = 0; i < doctorNum; i++)
-		{
-			// if you found it
-			if (change == darr[doctorIndex].name)
+		bool flag = true;
+		do {
+			cout << "Please write the new username \n";
+			cin >> change;
+			for (int i = 0; i < doctorNum; i++)
 			{
-				cout << "Please write the new username \n";
-				cin >> change;
-				bool flag = true;
-				for (int i = 0; i < doctorNum; i++)
+				if (change == darr[doctorIndex].name)
 				{
-					if (change == darr[doctorIndex].name)
-					{
-						cout << "invalid username, try another one \n";
-						flag = false;
-						break;
-					}
-
+					cout << "invalid username, try another one \n";
+					flag = false;
+					break;
 				}
-				if (flag) {
-					cout << "username Successfully updated\n";
-					darr[doctorIndex].name = change;
-				}
-				
-
-			}
-			else
-			{
-				cout << "This username is not correct, Please kindly try again or contact your system administrator for more details";
 			}
 
-		}
-
-
+			if (flag) {
+				cout << "username Successfully updated\n";
+				darr[doctorIndex].name = change;
+			}
+		} while (flag == false);
+		break;
 	}
 
 	case 3:
 	{
 		// return to the main minu 
 		doctorMenu();
+		break;
 	}
-
 
 	}
 }
+
+void editPatientInfo(patient parr[], int patientIndex, int patientNum) {
+	char response;
+	cout << "Want to edit your data? We're here for help\n";
+	cout << "1.Edit your password" << endl;
+	cout << "2.Edit your username" << endl;
+	cout << "3.Main menu" << endl;
+	cout << "Enter your choice :";
+	cin >> response;
+
+	string holder;
+	switch (response)
+	{
+	case '1':
+	{
+		cout << "Please enter the old password you want to change: \n";
+		cin >> holder;
+
+		if (holder == parr[patientIndex].password)
+		{
+			cout << "Please write the new password \n";
+			cin >> parr[patientIndex].password;
+			cout << "Password Successfully updated \n";
+		}
+		else
+		{
+			cout << "This password is not correct, Please kindly try again or contact your system administrator for more details";
+			patientMenu();
+		}
+		break;
+	}
+
+	case '2':
+	{
+		bool flag = true;
+		do {
+			cout << "Please write the new username \n";
+			cin >> holder;
+			for (int i = 0; i < patientNum; i++)
+			{
+				if (holder == parr[i].name)
+				{
+					cout << "invalid username, try another one \n";
+					flag = false;
+					break;
+				}
+			}
+
+			if (flag) {
+				cout << "username Successfully updated\n";
+				parr[patientIndex].name = holder;
+			}
+		} while (flag == false);
+		break;
+	}
+
+	case '3':
+	{
+		patientMenu();
+	}
+
+	default:
+	{
+		cout << "Invalid Input. Please try again!";
+		break;
+	}
+		
+	}
+		
+}
+
+void viewAppointments(appointment applist[], int i) {
+		cout << "Your Appointments\n";
+		for (int i = 0; i < 50; i++) {
+			cout << "Doctor Name: ";
+			cout << applist[i].doctorName << "\n ";
+			cout << "Time of Appointment:\n";
+			cout << "Date:" << applist[i].time.date.day << "/" << applist[i].time.date.month << "/" << applist[i].time.date.year << "\n";
+			cout << "Time" << applist[i].time.hour << ":" << applist[i].time.minute << "\n";
+		}
+	}
+
+void clearAppointment(appointment applist[], int i) {
+		for (int i = 0; i < 50; i++) {
+			delete applist[i];
+			applist[i] = NULL;
+		}
+	}
 //_______________________________________________________
 
 void account()
