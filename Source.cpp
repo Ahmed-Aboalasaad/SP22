@@ -1,12 +1,12 @@
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <string.h>
 using namespace std;
 
-// Using "Visual Studio version 2022" with the latest update
-// Please:
-//	leave a LOT of comments (we will submit a less-commenty version later)
-//	name things in the camel-case way with very discriptive names even if they are long
-
+// Constants
+#define doctorLimit 50
+#define patientLimit 50
 
 // STRUCTS
 struct dateStruct
@@ -33,7 +33,7 @@ struct patient
 {
 	string name, password;
 	dateStruct DOB;
-	appointment Pappointments[20];
+	appointment appointments[20];
 };
 
 struct doctor
@@ -43,6 +43,11 @@ struct doctor
 	timeStruct availableTime[20];
 };
 
+struct info_doctor {
+	char names[25], numbers[25], passwords[25], majors[25];
+	int ages;
+}inf;
+
 
 // FUNCTIONS prototypes
 // Gehad
@@ -50,61 +55,66 @@ void sign_up();
 void sign_in();
 void start();
 
-void doctorMenu(doctor darr[], int j);
-void patientMenu();
+// menus
+void doctorMenu(doctor darr[], int doctorIndex);
+void patientMenu(patient parr[], doctor darr[], int patientIndex);
 
 // DINA
-void editInfo(doctor darr[], int j, int doctorNum);
+void editDoctorInfo(doctor darr[], int doctorIndex);
 
 // ABO
-void findDoctor(doctor darr[], int patientIndex, int doctorNum);
-void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize, int doctorNum);
+void findDoctor(doctor darr[], int patientIndex);
+void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize);
 
 // Safa
-void displayPatientAppointments();
-void editPatientInfo();
+void displayPatientAppointments(appointment applist[], int i);
+void editPatientInfo(patient parr[], doctor darr[], int patientIndex);
 
 // Seif
 void addAppointment(int doctorIndex, int patientIndex);
 void editAppointment();
 void deleteAppointments();
-void clearAppointments();
+void clearAppointments(appointment applist[], int i);
 
 //MAYAR
-void editAvailableTime(doctor darr[], int j);
-void displayDoctorAppointments(doctor darr[], int j);
+void editAvailableTime(doctor darr[], int doctorIndex);
+void displayDoctorAppointments(doctor darr[], int doctorIndex);
 
 //MALK
-void AddAvailableTime(doctor darr[], int j);
-void RemoveAvailabeTime(doctor darr[], int doctorIndex, int drNum);
+void AddAvailableTime(doctor darr[], int doctorIndex);
+void RemoveAvailabeTime(doctor darr[], int doctorIndex);
 
+//------------------------------------------------------------------------------
 
 int main() {
-	const int doctorNum = 50, PatientNum = 50;
 
 	// Loading data from files
 	
-	doctor Darr[doctorNum];
-	patient Parr[PatientNum];
+	doctor darr[doctorLimit];
+	patient parr[patientLimit];
 	char ans;
 	cout << "------------ Welcome om E7gezly ------------\n";
 
 	// GEHAD : (SIGN UP OR LOG IN)
 
 	int i = 10;               	//just a sample to work with , this part will be done in GEHAD'S part
-	Darr[i].name = "Malk";     	//just a sample to work with , this part will be done in GEHAD'S part
+	darr[i].name = "Malk";     	//just a sample to work with , this part will be done in GEHAD'S part
+	/*
+	this should be in the sign in function:
 
 	cout << " as a doctor or patient?";
 	cin >> ans;
 	if (ans == 'd' || ans == 'D')
-		doctorMenu(Darr, i);
+		doctorMenu(darr, i);
 	else if (ans == 'p' || ans == 'P')
-		patientMenu();
+		patientMenu(parr, darr, patientIndex);
 
+	*/
 	
 	return 0;
 } // END MAIN
 
+// Menu
 void doctorMenu(doctor darr[], int doctorIndex)
 {
 
@@ -146,7 +156,7 @@ void doctorMenu(doctor darr[], int doctorIndex)
 		// Edit you info
 		else if (service == '5')
 		{
-			editInfo(darr, doctorIndex);  // DINA
+			editDoctorInfo(darr, doctorIndex);  // DINA
 		}
 		else
 		{
@@ -156,18 +166,56 @@ void doctorMenu(doctor darr[], int doctorIndex)
 
 
 		// Another Operation ?
-		cout << "have a nice day dr." << darr[j].name << endl
+		cout << "have a nice day dr." << darr[doctorIndex].name << endl
 			<< "1. Go back to the main menu? ( h / H / home )";
 		cin >> order;
 
 		// GEHAD, make it case-insensetive checking ,please
 	} while (order == "h" || order == "H" || order == "home" || order == "Home");
 
-	cout << "Thank you for using our system, have a nice day doctor " << darr[j].name << ":)\n";
+	cout << "Thank you for using our system, have a nice day doctor " << darr[doctorIndex].name << ":)\n";
 
 
 }
 
+void patientMenu(patient parr[], doctor darr[], int patientIndex) {  // parr -> array of patients & i -> index in that array
+	// which service ?
+	cout << "1. Find a doctor" << endl     // Abo
+		<< "2. your appointments" << endl  // Mohamed displays and clears history & Seif edits
+		<< "3. Edit your Info" << endl;    // Mohamed
+	char service;
+	string order;
+
+	do {
+		cin >> service;
+
+		if (service == '1')
+			findDoctor(darr, patientIndex);
+		
+		else if (service == '2')
+			displayPatientAppointments(parr[patientIndex].appointments, patientIndex);
+
+		else if (service == '3')
+			editPatientInfo(parr, darr, patientIndex);
+
+		else {
+			cout << "Invalid choice please try again!\n";
+			continue;
+		}
+
+		// Another Operation ?
+		cout << "have a nice day ," << parr[patientIndex].name << endl
+			<< "Main Menu? ( h / H / home )";
+		cin >> order;
+
+		// GEHAD, make it case-insensetive checking ,please
+	} while (order == "h" || order == "H" || order == "home" || order == "Home");
+
+	cout << "Thank you for using our system, have a nice day ," << parr[patientIndex].name << " :)\n";
+
+}
+
+// Doctor
 void editAvailableTime(doctor darr[], int doctorIndex)
 {
 	// view the old appointments
@@ -236,7 +284,7 @@ void addAvailableTime(doctor darr[], int doctorIndex)
 	} while (another == 'y' || another == 'Y');
 }
 
-void RemoveAvailableTime(doctor darr[], int doctorIndex, int drNum)
+void RemoveAvailableTime(doctor darr[], int doctorIndex)
 {
 	timeStruct Delete;
 	char another = 'y';
@@ -288,10 +336,10 @@ void RemoveAvailableTime(doctor darr[], int doctorIndex, int drNum)
 void displayDoctorAppointment(doctor darr[], int doctorIndex)
 {
 
-	cout << "------------ appointments of dr." << darr[j].name << " ------------\n";
+	cout << "------------ appointments of dr." << darr[doctorIndex].name << " ------------\n";
 	for (int i = 0; i < 20; i++)
 	{
-		cout << "patient name : " << darr[j].DRappointments[i].patientName
+		cout << "patient name : " << darr[doctorIndex].DRappointments[i].patientName
 			<< "\n Appointment date: "
 			<< darr[doctorIndex].DRappointments[i].time.date.day << "/"
 			<< darr[doctorIndex].DRappointments[i].time.date.month << "/"
@@ -303,44 +351,8 @@ void displayDoctorAppointment(doctor darr[], int doctorIndex)
 
 }
 
-void patientMenu(patient parr[], doctor darr[], int i) {  // parr -> array of patients & i -> index in that array
-	// which service ?
-	cout << "1. Find a doctor" << endl     // Abo
-		<< "2. your appointments" << endl  // Mohamed displays and clears history & Seif edits
-		<< "3. Edit your Info" << endl;    // Mohamed
-	char service;
-	string order;
-
-	do {
-		cin >> service;
-
-		if (service == '1')
-			findDoctor(darr, i);
-
-		else if (service == '2')
-			displayPatientAppointments();
-
-		else if (service == '3')
-			editPatientInfo();
-
-		else {
-			cout << "Invalid choice please try again!\n";
-			continue;
-		}
-
-		// Another Operation ?
-		cout << "have a nice day ," << parr[i].name << endl
-			<< "Main Menu? ( h / H / home )";
-		cin >> order;
-
-		// GEHAD, make it case-insensetive checking ,please
-	} while (order == "h" || order == "H" || order == "home" || order == "Home");
-
-	cout << "Thank you for using our system, have a nice day ," << parr[i].name << " :)\n";
-
-}
-
-void findDoctor (doctor darr[], int patientIndex, int resultSize, int doctorNum) {
+// Patient
+void findDoctor (doctor darr[], int patientIndex) {
 	// search by major
 	cout << "Choose a Major: \n"
 		<< "1. Dentist\t\t2. Pediatrician\n"
@@ -378,7 +390,7 @@ void findDoctor (doctor darr[], int patientIndex, int resultSize, int doctorNum)
 			cout << "Invalid input.. Please try again.";
 			response = "repeat";
 		}
-	} while(response == "repeat");  // use swtich instead ?
+	} while(response == "repeat");
 
 	
 
@@ -400,12 +412,13 @@ void findDoctor (doctor darr[], int patientIndex, int resultSize, int doctorNum)
 	for (int i = 0; i < size; i++) {
 		cout << i+1 << ". Name\t\t" << darr[ptr1[i]].name; // more details ?
 	}
-	//_________________________________________________________
+
+
 	cout << "Filter by Available Time? ( y / n )\n";
 	do {
 		cin >> response;
 		if (response == "y" || response == "Y")
-			timeFilter(darr, patientIndex, ptr1, size, doctorNum);
+			timeFilter(darr, patientIndex, ptr1, size);
 		
 		else if (response == "n" || response == "N") {
 			cout << "which doctor do you want to make an appointment with?\n";
@@ -421,14 +434,11 @@ void findDoctor (doctor darr[], int patientIndex, int resultSize, int doctorNum)
 
 	delete[] ptr1; // release the memory
 	ptr1 = NULL; ptr2 = NULL;  // avoid dangling pointers
-	//_________________________________________________________
 	
-	
-
 	// improve the intelligence of your search later ,dude!
 }
 
-void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize, int doctorNum) {
+void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize) {
 	// what's your desired time for your appointment
 	timeStruct timeHolder;
 	cout << "You are searching for an appointment :\nat (month day hour minute): ";
@@ -468,42 +478,37 @@ void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize, in
 	addAppointment(doctorID, patientIndex);
 }
 
-void editInfo(doctor darr[], int doctorIndex, int doctorNum)
+void editDoctorInfo(doctor darr[], int doctorIndex)
 {
 	// Variable used to asssign editing the username or password
-	int editinfochoice;
+	int choice;
+	string holder;
 
-	string change;
-	// Obtain the old username or password
 	cout << "Want to edit your data? We're here for help\n";
 	cout << "1.Edit your password" << endl;
 	cout << "2.Edit your username" << endl;
 	cout << "3.Main menu" << endl;
 	cout << "Enter your choice :";
-	cin >> editinfochoice;
+	cin >> choice;
 
-	switch (editinfochoice)
+	switch (choice)
 	{
 	case 1:
 	{
 		cout << "Please enter the old password you want to change: \n";
-		cin >> change.password;
+		cin >> holder;
 
-		// loop over this doctor's database to find the old one
-		for (int i = 0; i < doctorNum; i++)
+		
+		// if you found it
+		if (holder == darr[doctorIndex].password)
 		{
-			// if you found it
-			if (change.password == darr[j].password)
-			{
-				cout << "Please write the new password \n";
-				cin >> darr[j].password;
-				cout << "Password Successfully updated \n";
-			}
-			else
-			{
-				cout << "This password is not correct, Please kindly try again or contact your system administrator for more details";
-			}
-
+			cout << "Please write the new password \n";
+			cin >> darr[doctorIndex].password;
+			cout << "Password Successfully updated \n";
+		}
+		else
+		{
+			cout << "This password is not correct, Please kindly try again or contact your system administrator for more details";
 		}
 		break;
 	}
@@ -513,10 +518,10 @@ void editInfo(doctor darr[], int doctorIndex, int doctorNum)
 		bool flag = true;
 		do {
 			cout << "Please write the new username \n";
-			cin >> change;
-			for (int i = 0; i < doctorNum; i++)
+			cin >> holder;
+			for (int i = 0; i < doctorLimit; i++)
 			{
-				if (change == darr[doctorIndex].name)
+				if (holder == darr[doctorIndex].name)
 				{
 					cout << "invalid username, try another one \n";
 					flag = false;
@@ -526,7 +531,7 @@ void editInfo(doctor darr[], int doctorIndex, int doctorNum)
 
 			if (flag) {
 				cout << "username Successfully updated\n";
-				darr[doctorIndex].name = change;
+				darr[doctorIndex].name = holder;
 			}
 		} while (flag == false);
 		break;
@@ -535,14 +540,14 @@ void editInfo(doctor darr[], int doctorIndex, int doctorNum)
 	case 3:
 	{
 		// return to the main minu 
-		doctorMenu();
+		doctorMenu(darr, doctorIndex);
 		break;
 	}
 
 	}
 }
 
-void editPatientInfo(patient parr[], int patientIndex, int patientNum) {
+void editPatientInfo(patient parr[], doctor darr[], int patientIndex) {
 	char response;
 	cout << "Want to edit your data? We're here for help\n";
 	cout << "1.Edit your password" << endl;
@@ -568,7 +573,7 @@ void editPatientInfo(patient parr[], int patientIndex, int patientNum) {
 		else
 		{
 			cout << "This password is not correct, Please kindly try again or contact your system administrator for more details";
-			patientMenu();
+			patientMenu(parr, darr, patientIndex);
 		}
 		break;
 	}
@@ -579,7 +584,7 @@ void editPatientInfo(patient parr[], int patientIndex, int patientNum) {
 		do {
 			cout << "Please write the new username \n";
 			cin >> holder;
-			for (int i = 0; i < patientNum; i++)
+			for (int i = 0; i < patientLimit; i++)
 			{
 				if (holder == parr[i].name)
 				{
@@ -599,7 +604,7 @@ void editPatientInfo(patient parr[], int patientIndex, int patientNum) {
 
 	case '3':
 	{
-		patientMenu();
+		patientMenu(parr, darr, patientIndex);
 	}
 
 	default:
@@ -612,7 +617,7 @@ void editPatientInfo(patient parr[], int patientIndex, int patientNum) {
 		
 }
 
-void viewAppointments(appointment applist[], int i) {
+void displayPatientAppointments(appointment applist[], int i) {
 		cout << "Your Appointments\n";
 		for (int i = 0; i < 50; i++) {
 			cout << "Doctor Name: ";
@@ -644,6 +649,7 @@ void account()
 
 	}
 }
+
 void sign_up()
 {
 	string again;
@@ -685,6 +691,7 @@ void sign_up()
 	} while (again == "yes" || again == "Yes");
 
 }
+
 void sign_in() {
 	string again;
 	do {
@@ -719,6 +726,7 @@ void sign_in() {
 		cin >> again;
 	} while (again == "yes" || again == "Yes");
 }
+
 void start() {
 	string username, password, response, exit;
 	cout << "Hello! Are you a Doctor or a Patient ? \n";
