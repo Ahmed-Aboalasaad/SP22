@@ -33,7 +33,7 @@ struct patient
 {
 	string name, password;
 	dateStruct DOB;
-	appointment appointments[20];
+	appointment Pappointments[20];
 };
 
 struct doctor
