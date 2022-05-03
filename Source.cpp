@@ -78,7 +78,7 @@ void deleteAppointments();
 
 //MAYAR
 void editAvailableTime(doctor darr[], int doctorIndex);
-void displayDoctorAppointments(doctor darr[], int doctorIndex);
+void displayDoctorAppointment(doctor darr[], int doctorIndex);
 
 //MALK
 void AddAvailableTime(doctor darr[], int doctorIndex);
