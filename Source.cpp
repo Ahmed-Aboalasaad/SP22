@@ -69,12 +69,12 @@ void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize);
 // Safa
 void displayPatientAppointments(appointment applist[], int i);
 void editPatientInfo(patient parr[], doctor darr[], int patientIndex);
+void clearAppointments(appointment applist[], int i);
 
 // Seif
 void addAppointment(int doctorIndex, int patientIndex);
 void editAppointment();
 void deleteAppointments();
-void clearAppointments(appointment applist[], int i);
 
 //MAYAR
 void editAvailableTime(doctor darr[], int doctorIndex);
