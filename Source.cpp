@@ -617,23 +617,21 @@ void editPatientInfo(patient parr[], doctor darr[], int patientIndex) {
 		
 }
 
-void displayPatientAppointments(appointment applist[], int i) {
-		cout << "Your Appointments\n";
-		for (int i = 0; i < 50; i++) {
-			cout << "Doctor Name: ";
-			cout << applist[i].doctorName << "\n ";
-			cout << "Time of Appointment:\n";
-			cout << "Date:" << applist[i].time.date.day << "/" << applist[i].time.date.month << "/" << applist[i].time.date.year << "\n";
-			cout << "Time" << applist[i].time.hour << ":" << applist[i].time.minute << "\n";
-		}
+void displayPatientAppointments(patient Parr[], int patienIndex) {
+	cout << "Your Appointments\n";
+	for (int i = 0; i < 50; i++) {
+		cout << "Doctor Name: ";
+		cout << Parr[patienIndex].Pappointments[i].doctorName << "\n ";
+		cout << "Time of Appointment:\n";
+		cout << "Date:" << Parr[patienIndex].Pappointments[i].time.date.day << "/" << Parr[patienIndex].Pappointments[i].time.date.month << "/" << Parr[patienIndex].Pappointments[i].time.date.year << "\n";
+		cout << "Time" << Parr[patienIndex].Pappointments[i].time.hour << ":" << Parr[patienIndex].Pappointments[i].time.minute << "\n";
 	}
-
-void clearAppointment(appointment applist[], int i) {
-		for (int i = 0; i < 50; i++) {
-			delete applist[i];
-			applist[i] = NULL;
-		}
+}
+void clearAppointment(patient Parr[], int patienIndex) {
+	for (int i = 0; i < 50; i++) {
+		Parr[patienIndex].Pappointments[i] = NULL;
 	}
+}
 //_______________________________________________________
 
 void account()
