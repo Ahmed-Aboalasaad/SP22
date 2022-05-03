@@ -629,7 +629,14 @@ void displayPatientAppointments(patient Parr[], int patienIndex) {
 }
 void clearAppointment(patient Parr[], int patienIndex) {
 	for (int i = 0; i < 50; i++) {
-		Parr[patienIndex].Pappointments[i] = NULL;
+		Parr[patienIndex].Pappointments[i].time.hour = 0;
+		Parr[patienIndex].Pappointments[i].time.minute = 0;
+		Parr[patienIndex].Pappointments[i].time.Available = true;
+		Parr[patienIndex].Pappointments[i].time.date.day = 0;
+		Parr[patienIndex].Pappointments[i].time.date.month = 0;   //مش هنساوي السنة بصفر عشان هي 2022
+		Parr[patienIndex].Pappointments[i].doctorName = "-1";
+		Parr[patienIndex].Pappointments[i].patientName = "-1";
+
 	}
 }
 //_______________________________________________________
