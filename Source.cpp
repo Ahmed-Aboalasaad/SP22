@@ -63,8 +63,8 @@ void patientMenu(patient parr[], doctor darr[], int patientIndex);
 void editDoctorInfo(doctor darr[], int doctorIndex);
 
 // ABO
-void findDoctor(doctor darr[], int patientIndex);
-void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize);
+void findDoctor(doctor darr[], patient parr[], int patientIndex);
+void timeFilter(doctor darr[], patient parr[], int patientIndex, int* result, int resultSize);
 
 // Safa
 void displayPatientAppointments(appointment applist[], int i);
@@ -72,9 +72,10 @@ void editPatientInfo(patient parr[], doctor darr[], int patientIndex);
 void clearAppointments(appointment applist[], int i);
 
 // Seif
-void addAppointment(int doctorIndex, int patientIndex);
-void editAppointment();
-void deleteAppointments();
+void addAppointment(doctor darr[], patient parr[], int patientIndex, int docIndex);
+void addAppointment(doctor darr[], patient parr[], int patientIndex, int docIndex, timeStruct timeHolder);
+void editAppointment(doctor darr[], patient parr[], int patientIndex);
+void deleteAppointments(doctor darr[], patient parr[], int patientIndex);
 
 //MAYAR
 void editAvailableTime(doctor darr[], int doctorIndex);
@@ -89,7 +90,7 @@ void RemoveAvailabeTime(doctor darr[], int doctorIndex);
 int main() {
 
 	// Loading data from files
-	
+
 	doctor darr[doctorLimit];
 	patient parr[patientLimit];
 	char ans;
@@ -110,7 +111,7 @@ int main() {
 		patientMenu(parr, darr, patientIndex);
 
 	*/
-	
+
 	return 0;
 } // END MAIN
 
@@ -183,18 +184,42 @@ void patientMenu(patient parr[], doctor darr[], int patientIndex) {  // parr -> 
 	cout << "1. Find a doctor" << endl     // Abo
 		<< "2. your appointments" << endl  // Mohamed displays and clears history & Seif edits
 		<< "3. Edit your Info" << endl;    // Mohamed
-	char service;
+	char service, appointmentService;
 	string order;
 
 	do {
 		cin >> service;
 
 		if (service == '1')
-			findDoctor(darr, patientIndex);
-		
-		else if (service == '2')
-			displayPatientAppointments(parr[patientIndex].Pappointments, patientIndex);
+			findDoctor(darr, parr, patientIndex);
 
+		else if (service == '2') {
+
+			cout << "1. Display appointments" << endl
+				<< "2. Edit appointments" << endl
+				<< "3. Cancel appointments" << endl
+				<< "4. Return" << endl;
+			cin >> appointmentService;
+
+			if (appointmentService == '1') {
+				displayPatientAppointments(parr[patientIndex].Pappointments, patientIndex);
+			}
+			else if (appointmentService == '2') {
+				editAppointment(darr, parr, patientIndex);
+			}
+			else if (appointmentService == '3') {
+				deleteAppointments(darr, parr, patientIndex);
+			}
+			else if (appointmentService == '4') {
+				continue;
+			}
+			else {
+				cout << "Invaild choice please try again!\n";
+				continue;
+			}
+
+
+		}
 		else if (service == '3')
 			editPatientInfo(parr, darr, patientIndex);
 
@@ -242,9 +267,9 @@ void editAvailableTime(doctor darr[], int doctorIndex)
 			{
 				// take the updated appointment
 				cout << "Please write the new time date(day month), hour, minute\n";
-				cin >> darr[doctorIndex].DRappointments[i].time.date.day 
-					>> darr[doctorIndex].DRappointments[i].time.date.month 
-					>> darr[doctorIndex].DRappointments[i].time.hour 
+				cin >> darr[doctorIndex].DRappointments[i].time.date.day
+					>> darr[doctorIndex].DRappointments[i].time.date.month
+					>> darr[doctorIndex].DRappointments[i].time.hour
 					>> darr[doctorIndex].DRappointments[i].time.minute;
 			}
 			else
@@ -352,7 +377,7 @@ void displayDoctorAppointment(doctor darr[], int doctorIndex)
 }
 
 // Patient
-void findDoctor (doctor darr[], int patientIndex) {
+void findDoctor(doctor darr[], patient parr[], int patientIndex) {
 	// search by major
 	cout << "Choose a Major: \n"
 		<< "1. Dentist\t\t2. Pediatrician\n"
@@ -390,9 +415,9 @@ void findDoctor (doctor darr[], int patientIndex) {
 			cout << "Invalid input.. Please try again.";
 			response = "repeat";
 		}
-	} while(response == "repeat");
+	} while (response == "repeat");
 
-	
+
 
 	// this is a dynamic array that I store the indeces of the
 	// search-resultant doctors in
@@ -405,12 +430,12 @@ void findDoctor (doctor darr[], int patientIndex) {
 			*(ptr2++) = i;
 			size++;
 		}
-	}	
+	}
 	// Now, I have the research result
 
 	// print it
 	for (int i = 0; i < size; i++) {
-		cout << i+1 << ". Name\t\t" << darr[ptr1[i]].name; // more details ?
+		cout << i + 1 << ". Name\t\t" << darr[ptr1[i]].name; // more details ?
 	}
 
 
@@ -418,27 +443,27 @@ void findDoctor (doctor darr[], int patientIndex) {
 	do {
 		cin >> response;
 		if (response == "y" || response == "Y")
-			timeFilter(darr, patientIndex, ptr1, size);
-		
+			timeFilter(darr, parr, patientIndex, ptr1, size);
+
 		else if (response == "n" || response == "N") {
 			cout << "which doctor do you want to make an appointment with?\n";
 			int choice;
 			cin >> choice;
-			addAppointment(choice - 1, patientIndex);
+			addAppointment(darr, parr, patientIndex, choice - 1);
 		}
 
 		else
 			cout << "Invalid input. Please try again!";
 	} while (response != "y" && response != "Y" && response != "n" && response != "N");
-	
+
 
 	delete[] ptr1; // release the memory
 	ptr1 = NULL; ptr2 = NULL;  // avoid dangling pointers
-	
+
 	// improve the intelligence of your search later ,dude!
 }
 
-void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize) {
+void timeFilter(doctor darr[], patient parr[], int patientIndex, int* result, int resultSize) {
 	// what's your desired time for your appointment
 	timeStruct timeHolder;
 	cout << "You are searching for an appointment :\nat (month day hour minute): ";
@@ -454,9 +479,9 @@ void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize) {
 				timeHolder.hour == darr[result[i]].DRappointments[j].time.hour &&
 				timeHolder.minute == darr[result[i]].DRappointments[j].time.minute &&
 				darr[result[i]].DRappointments[j].time.Available == true) {
-				break; 
+				break;
 			}
-			
+
 			result[i] = -1;
 		}
 	}
@@ -467,16 +492,309 @@ void timeFilter(doctor darr[], int patientIndex, int* result, int resultSize) {
 		<< "Id\t\tName";
 	for (int i = 0; i < resultSize; i++) {
 		if (result[i] != -1) {
-				cout << counter++ << ". " << darr[result[i]].name << result[i] << endl;
-				// alternative solution : make a function to "shift" the rest of the dynamic array
+			cout << counter++ << ". " << darr[result[i]].name << result[i] << endl;
+			// alternative solution : make a function to "shift" the rest of the dynamic array
 		}
 	}
 	int doctorID;
 	cout << "Enter the ID you chose :";
 	cin >> doctorID;
 
-	addAppointment(doctorID, patientIndex);
+	addAppointment(darr, parr, patientIndex, doctorID, timeHolder);
 }
+
+void addAppointment(doctor darr[], patient parr[], int patientIndex, int docIndex) {
+	// 1. get number of appointments booked by patient so we can add on an empty index.
+	// 2. choose available time.
+	// 3. mark it booked.
+	// 4. assign that available time to an actual appointment for the patient.
+	// 5. assign that available time to an actual appointment for the doctor.
+
+	int counter;
+	for (int i = 0; i < 20; i++) {
+		if (parr[patientIndex].Pappointments[i].time.date.day == 0 &&
+			parr[patientIndex].Pappointments[i].time.date.month == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0) {
+			counter = i;
+			break;
+		}
+	}
+
+	int addChoice = 0; //patient will use to choose his desired appointment from available time.
+	//showing the user available appointments to book.
+	cout << "Available appointments:\n";
+	for (int i = 0; i < 20; i++) {
+		//if it is available to book
+		if (darr[docIndex].availableTime[i].Available) {
+			cout << "\t(" << i + 1 << ")" << endl;
+			cout << "Date: " << darr[docIndex].availableTime[i].date.day << "/" << darr[docIndex].availableTime[i].date.month << "/" << darr[docIndex].availableTime[i].date.year << endl;
+			cout << "Time: " << darr[docIndex].availableTime[i].hour << ":" << darr[docIndex].availableTime[i].minute << endl;
+		}
+	}
+
+	//asking user to choose his desired appointment.
+	do {
+		cout << "Choose the appointment you want from above:\n" << endl;
+		cin >> addChoice;
+		addChoice--;
+	} while (addChoice < 0 || addChoice >= 20 || darr[docIndex].availableTime[addChoice].Available == false);
+	// >>>> step (2): done.
+
+
+	//marking the chosen appointment as booked.
+	darr[docIndex].availableTime[addChoice].Available = false;
+	// >>>> step (3): done.
+
+
+	//assigning available appointment time to an actual patient appointment.
+	parr[patientIndex].Pappointments[counter].doctorName = darr[docIndex].name;
+	parr[patientIndex].Pappointments[counter].time.date.day = darr[docIndex].availableTime[addChoice].date.day;
+	parr[patientIndex].Pappointments[counter].time.date.month = darr[docIndex].availableTime[addChoice].date.month;
+	parr[patientIndex].Pappointments[counter].time.date.year = darr[docIndex].availableTime[addChoice].date.year;
+	parr[patientIndex].Pappointments[counter].time.hour = darr[docIndex].availableTime[addChoice].hour;
+	parr[patientIndex].Pappointments[counter].time.minute = darr[docIndex].availableTime[addChoice].minute;
+	// >>>> step (4): done.
+
+
+	//assigning available appointment time to an actual doctor appointment.
+	darr[docIndex].DRappointments[addChoice].patientName = parr[patientIndex].name;
+	darr[docIndex].DRappointments[addChoice].time.date.day = darr[docIndex].availableTime[addChoice].date.day;			//index of doctor appointment = index of available time
+	darr[docIndex].DRappointments[addChoice].time.date.month = darr[docIndex].availableTime[addChoice].date.month;
+	darr[docIndex].DRappointments[addChoice].time.date.year = darr[docIndex].availableTime[addChoice].date.year;
+	darr[docIndex].DRappointments[addChoice].time.hour = darr[docIndex].availableTime[addChoice].hour;
+	darr[docIndex].DRappointments[addChoice].time.minute = darr[docIndex].availableTime[addChoice].minute;
+	// >>>> step (5): done.
+
+	cout << "Appointment added successfully" << endl;
+}
+
+void addAppointment(doctor darr[], patient parr[], int patientIndex, int docIndex, timeStruct timeHolder) {
+	//getting number of booked appointments so we can add up on an empty index.
+	int counter;
+	for (int i = 0; i < 20; i++) {
+		if (parr[patientIndex].Pappointments[i].time.date.day == 0 &&
+			parr[patientIndex].Pappointments[i].time.date.month == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0) {
+			counter = i;
+			break;
+		}
+	}
+
+	//getting appointment index for the dr.
+	int docAppointment;
+	for (int i = 0; i < 20; i++) {
+		if (timeHolder.date.day == darr[docIndex].availableTime[i].date.day &&
+			timeHolder.date.month == darr[docIndex].availableTime[i].date.month &&
+			timeHolder.hour == darr[docIndex].availableTime[i].hour &&
+			timeHolder.minute == darr[docIndex].availableTime[i].minute) {
+			docAppointment = i;
+		}
+	}
+
+	//booking available time into an appointment.
+	darr[docIndex].availableTime[docAppointment].Available = false;
+
+	//assigning available time to an actual appointment for the doctor.
+	darr[docIndex].DRappointments[docAppointment].patientName = parr[patientIndex].name;
+	darr[docIndex].DRappointments[docAppointment].time.date = darr[docIndex].availableTime[docAppointment].date;
+	darr[docIndex].DRappointments[docAppointment].time.hour = darr[docIndex].availableTime[docAppointment].hour;
+	darr[docIndex].DRappointments[docAppointment].time.minute = darr[docIndex].availableTime[docAppointment].minute;
+
+	//assigning available time to an actual appointment for the doctor.
+	parr[patientIndex].Pappointments[counter].doctorName = darr[docIndex].name;
+	parr[patientIndex].Pappointments[counter].time = darr[docIndex].DRappointments[docAppointment].time;
+
+	cout << "Appointment added successfully" << endl;
+}
+
+void editAppointment(doctor darr[], patient parr[], int patientIndex) {
+	// 1. get patient appointments count.
+	// 1. show the patient all his booked appointments (from all doctors)
+	// 2. ask him to choose the one he wants to edit. (which will be excluded)
+	// 3. get index of the appointment for the dr.
+	// 4. mark it unbooked (available = true)
+	// 5. remove dr appointment.
+	// 6. show him available appointments by the same doctor.
+	// 7. make him choose his new desired one.
+	// 8. mark it booked (available = false)
+	// 9. assign available time he choosed to an actual patient appointment.
+	// 10. assign available time he choosed to an actual doctor appointment.
+
+	int counter;
+	for (int i = 0; i < 20; i++) {
+		if (parr[patientIndex].Pappointments[i].time.date.day == 0 &&
+			parr[patientIndex].Pappointments[i].time.date.month == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0) {
+			counter = i;
+			break;
+		}
+	}
+
+	if (counter == 0) {
+		cout << "No appointments to edit";
+		return;
+	}
+
+
+	int editChoice = 0; //unwanted appointment.
+	int docIndex = -1, docAppointment = -1;
+
+
+	//Displaying booked appointments by the patient ( we will call view appointments functions instead )
+	cout << "Your appointments:\n";
+	for (int i = 0; i < counter + 1; i++) {
+		cout << "\t(" << i + 1 << ")\n";
+		cout << "Doctor name: " << parr[patientIndex].Pappointments[i].doctorName << endl;
+		cout << "Date: " << parr[patientIndex].Pappointments[i].time.date.day << "/" << parr[patientIndex].Pappointments[i].time.date.month << "/" << parr[patientIndex].Pappointments[i].time.date.year << endl;
+		cout << "Time: " << parr[patientIndex].Pappointments[i].time.hour << ":" << parr[patientIndex].Pappointments[i].time.minute << endl;
+	}
+
+	cout << "Choose the appointment you want to change:\n";
+	cin >> editChoice;
+	editChoice--; //to make it zero indexed.
+
+	//finding doctor index.
+	for (int i = 0; i < 50; i++) {
+		if (parr[patientIndex].Pappointments[editChoice].doctorName == darr[i].name) {
+			docIndex = i;
+			break;
+		}
+	}
+
+	//finding DRappointments index
+	for (int i = 0; i < 20; i++) {
+		if (parr[patientIndex].Pappointments[editChoice].time.date.day == darr[docIndex].DRappointments[i].time.date.day &&
+			parr[patientIndex].Pappointments[editChoice].time.date.month == darr[docIndex].DRappointments[i].time.date.month &&
+			parr[patientIndex].Pappointments[editChoice].time.hour == darr[docIndex].DRappointments[i].time.hour &&
+			parr[patientIndex].Pappointments[editChoice].time.hour == darr[docIndex].DRappointments[i].time.minute) {
+			docAppointment = i;
+			break;
+		}
+	}
+
+	//"deleteing" old appointment for doctor.
+
+	darr[docIndex].availableTime[docAppointment].Available = true;
+	darr[docIndex].DRappointments[docAppointment].patientName = '\0';
+	darr[docIndex].DRappointments[docAppointment].time.date.day = 0;
+	darr[docIndex].DRappointments[docAppointment].time.date.month = 0;
+	darr[docIndex].DRappointments[docAppointment].time.hour = 0;
+	darr[docIndex].DRappointments[docAppointment].time.minute = 0;
+
+
+	cout << "Choose new appointment time from below\n";
+	int choice = 0;
+	cout << "Available appointments:\n";
+	for (int i = 0; i < 20; i++) {
+		//if it is available to book
+		if (darr[docIndex].availableTime[i].Available) {
+			cout << "\t(" << i + 1 << ")" << endl;
+			cout << "Date: " << darr[docIndex].availableTime[i].date.day << "/" << darr[docIndex].availableTime[i].date.month << "/" << darr[docIndex].availableTime[i].date.year << endl;
+			cout << "Time: " << darr[docIndex].availableTime[i].hour << ":" << darr[docIndex].availableTime[i].minute << endl;
+		}
+	}
+	cin >> choice;
+	choice--;
+
+	darr[docIndex].availableTime[choice].Available = false;
+
+	darr[docIndex].DRappointments[choice].time.date.day = darr[docIndex].availableTime[choice].date.day;
+	darr[docIndex].DRappointments[choice].time.date.month = darr[docIndex].availableTime[choice].date.month;
+	darr[docIndex].DRappointments[choice].time.date.year = darr[docIndex].availableTime[choice].date.year;
+	darr[docIndex].DRappointments[choice].time.hour = darr[docIndex].availableTime[choice].hour;
+	darr[docIndex].DRappointments[choice].time.minute = darr[docIndex].availableTime[choice].minute;
+
+
+	parr[patientIndex].Pappointments[editChoice].time.date = darr[docIndex].availableTime[choice].date;
+	parr[patientIndex].Pappointments[editChoice].time.hour = darr[docIndex].availableTime[choice].hour;
+	parr[patientIndex].Pappointments[editChoice].time.minute = darr[docIndex].availableTime[choice].minute;
+
+	//addAppointment(darr, parr, patientIndex, patientAppChoice, index);
+
+
+	cout << "Appointment edited successfully\n";
+}
+
+void deleteAppointments(doctor darr[], patient parr[], int patientIndex) {
+	int counter;
+	for (int i = 0; i < 20; i++) {
+		if (parr[patientIndex].Pappointments[i].time.date.day == 0 &&
+			parr[patientIndex].Pappointments[i].time.date.month == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0 &&
+			parr[patientIndex].Pappointments[i].time.hour == 0) {
+			counter = i;
+			break;
+		}
+	}
+	if (counter == 0) {
+		"No Appointments to edit/cancel\n";
+		return;
+	}
+
+	int docIndex, docAppointment, deleteChoice;
+
+	cout << "Your appointments:\n";
+	for (int i = 0; i < counter + 1; i++) {
+		cout << "\t(" << i + 1 << ")\n";
+		cout << "Doctor name: " << parr[patientIndex].Pappointments[i].doctorName << endl;
+		cout << "Date: " << parr[patientIndex].Pappointments[i].time.date.day << "/" << parr[patientIndex].Pappointments[i].time.date.month << "/" << parr[patientIndex].Pappointments[i].time.date.year << endl;
+		cout << "Time: " << parr[patientIndex].Pappointments[i].time.hour << ":" << parr[patientIndex].Pappointments[i].time.minute << endl;
+	}
+	cout << "Choose the appointment you want to canel:\n";
+	cin >> deleteChoice;
+	deleteChoice--;
+
+	//getting doctor index
+	for (int i = 0; i < 50; i++) {
+		if (parr[patientIndex].Pappointments[deleteChoice].doctorName == darr[i].name) {
+			docIndex = i;
+			break;
+		}
+	}
+
+	//finding DRappointments index
+	for (int i = 0; i < 20; i++) {
+		if (parr[patientIndex].Pappointments[deleteChoice].time.date.day == darr[docIndex].DRappointments[i].time.date.day &&
+			parr[patientIndex].Pappointments[deleteChoice].time.date.month == darr[docIndex].DRappointments[i].time.date.month &&
+			parr[patientIndex].Pappointments[deleteChoice].time.hour == darr[docIndex].DRappointments[i].time.hour &&
+			parr[patientIndex].Pappointments[deleteChoice].time.hour == darr[docIndex].DRappointments[i].time.minute) {
+			docAppointment = i;
+			break;
+		}
+	}
+
+
+	darr[docIndex].availableTime[docAppointment].Available = true;
+	counter--;
+
+	//updating doctor appointment list
+	darr[docIndex].DRappointments[docAppointment].patientName = "\0";
+	darr[docIndex].DRappointments[docAppointment].time.date.day = 0;
+	darr[docIndex].DRappointments[docAppointment].time.date.month = 0;
+	darr[docIndex].DRappointments[docAppointment].time.hour = 0;
+	darr[docIndex].DRappointments[docAppointment].time.minute = 0;
+
+
+	//updating patient appointment list index by shifting it.
+	for (int i = deleteChoice; i < counter; i++) {
+		parr[patientIndex].Pappointments[i].doctorName = parr[patientIndex].Pappointments[i + 1].doctorName;
+		parr[patientIndex].Pappointments[i].time = parr[patientIndex].Pappointments[i + 1].time;
+	}
+
+	//deleting the last appointment (it was copied to the previous appointment)
+	parr[patientIndex].Pappointments[counter].doctorName = "\0";
+	parr[patientIndex].Pappointments[counter].time.date.day = 0;
+	parr[patientIndex].Pappointments[counter].time.date.month = 0;
+	parr[patientIndex].Pappointments[counter].time.hour = 0;
+	parr[patientIndex].Pappointments[counter].time.minute = 0;
+
+
+	cout << "Appointment canceled successfully\n";
+}
+
 
 void editDoctorInfo(doctor darr[], int doctorIndex)
 {
@@ -498,7 +816,7 @@ void editDoctorInfo(doctor darr[], int doctorIndex)
 		cout << "Please enter the old password you want to change: \n";
 		cin >> holder;
 
-		
+
 		// if you found it
 		if (holder == darr[doctorIndex].password)
 		{
@@ -612,9 +930,9 @@ void editPatientInfo(patient parr[], doctor darr[], int patientIndex) {
 		cout << "Invalid Input. Please try again!";
 		break;
 	}
-		
+
 	}
-		
+
 }
 
 void displayPatientAppointments(patient Parr[], int patienIndex) {
