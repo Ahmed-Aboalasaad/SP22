@@ -193,7 +193,7 @@ void patientMenu(patient parr[], doctor darr[], int patientIndex) {  // parr -> 
 			findDoctor(darr, patientIndex);
 		
 		else if (service == '2')
-			displayPatientAppointments(parr[patientIndex].appointments, patientIndex);
+			displayPatientAppointments(parr[patientIndex].Pappointments, patientIndex);
 
 		else if (service == '3')
 			editPatientInfo(parr, darr, patientIndex);
