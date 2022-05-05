@@ -422,7 +422,7 @@ void findDoctor(doctor darr[], patient parr[], int patientIndex) {
 	// this is a dynamic array that I store the indeces of the
 	// search-resultant doctors in
 	int* ptr1, * ptr2, size = 0;
-	ptr1 = new int[]();
+	ptr1 = new int[doctorLimit]();
 	ptr2 = ptr1;
 	// loop over doctors searching for the desired major
 	for (int i = 0; i < 50; i++) {
