@@ -244,7 +244,7 @@ void patientMenu(patient parr[], doctor darr[], int patientIndex) {  // parr -> 
 void editAvailableTime(doctor darr[], int doctorIndex)
 {
 	// view the old appointments
-	displayDoctorAppointments(darr, doctorIndex);
+	displayDoctorAppointment(darr, doctorIndex);
 
 	timeStruct change;
 	// Obtain the old appointment
