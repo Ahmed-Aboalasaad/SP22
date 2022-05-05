@@ -3,6 +3,7 @@
 #include <string>
 #include <string.h>
 using namespace std;
+using std::ifstream;
 
 // Constants
 #define doctorLimit 50
@@ -49,12 +50,18 @@ struct info_doctor {
 }inf;
 
 
+
 // FUNCTIONS prototypes
 // Gehad
-void sign_up();
-void sign_in();
-void start();
+void sign_in_patient();
+void account_patient();
+void sign_up_patient();
 void account();
+void sign_up();
+void start();
+void sign_in();
+
+
 
 // menus
 void doctorMenu(doctor darr[], int doctorIndex);
@@ -94,24 +101,11 @@ int main() {
 
 	doctor darr[doctorLimit];
 	patient parr[patientLimit];
-	char ans;
-	cout << "------------ Welcome om E7gezly ------------\n";
+	start();
+	darr[0].name = "mayar";
+	darr[0].password ="128";
+	darr[0].major = "dentist";
 
-	// GEHAD : (SIGN UP OR LOG IN)
-
-	int i = 10;               	//just a sample to work with , this part will be done in GEHAD'S part
-	darr[i].name = "Malk";     	//just a sample to work with , this part will be done in GEHAD'S part
-	/*
-	this should be in the sign in function:
-
-	cout << " as a doctor or patient?";
-	cin >> ans;
-	if (ans == 'd' || ans == 'D')
-		doctorMenu(darr, i);
-	else if (ans == 'p' || ans == 'P')
-		patientMenu(parr, darr, patientIndex);
-
-	*/
 
 	return 0;
 } // END MAIN
@@ -962,16 +956,19 @@ void clearAppointment(patient Parr[], int patienIndex) {
 
 void account()
 {
+	
 	string acc;
-	cout << "Do you have an account ? \n";
+	cout << "Do you have an account(y for yes / n for no)  ? \n";
 	cin >> acc;
-	if (acc == "Yes" || acc == "yes") {
+	if (acc == "Y" || acc == "y") {
 		sign_in();
 	}
-	if (acc == "No" || acc == "no") {
+	if (acc == "N" || acc == "n") {
 		sign_up();
 
 	}
+
+
 }
 
 void sign_up()
@@ -979,22 +976,17 @@ void sign_up()
 	string again;
 	cout << " Let's create a new email for you. \n";
 	fstream information;
-	information.open("User info.txt", ios::app);
-	fstream info;
-	info.open("doctor info.txt", ios::app);
+	information.open("doctor info.txt", ios::app);
 	cout << " Please enter your  First Name \n";
 	cin.ignore();
-	cin.getline(inf.names, 25);
+	cin.getline(inf.names, 50);
 	cout << "Please enter your Password \n";
-	cin.getline(inf.passwords, 25);
+	cin.getline(inf.passwords, 50);
 	cout << "Please enter you phone number \n";
-	cin.getline(inf.numbers, 25);
+	cin.getline(inf.numbers, 50);
 	cout << " Please enter your Age \n";
-	cin >> inf.ages;
-	cout << "Please enter your Major \n";
-	cin.ignore();
-	cin.getline(inf.majors, 25);
-	information << inf.names << '|' << inf.passwords << '|' << inf.ages << '|' << inf.numbers << '|' << inf.majors << '|' << "\n";
+	cin >> inf.ages;                           //why this is not getline?????
+	information << inf.names << '|' << inf.passwords << '|' << inf.ages << '|' << inf.numbers << "\n";
 	cout << "Created successfully \n";
 	do {
 		string username, password;
@@ -1019,53 +1011,130 @@ void sign_up()
 void sign_in() {
 	string again;
 	do {
-		char username[25], password[25];
+		char username[50], password[50];
 		fstream information;
-		information.open("User info.txt", ios::in);
+		information.open("doctor info.txt", ios::in);
 		cout << "Please enter your username\n";
 		cin.ignore();
-		cin.getline(username, 25);
+		cin.getline(username, 50);
 		cout << "Please enter your password \n";
-		cin.getline(password, 25);
-		//int x = 0;
+		cin.getline(password, 50);
+		int x = 0;
 		while (!information.eof()) {
-			information.getline(inf.names, 25, '|');
+			information.getline(inf.names, 50, '|');
 			if (strcmp(inf.names, username) == 0) {
-				information.getline(inf.passwords, 25, '|');
+				information.getline(inf.passwords, 50, '|');
 				if (strcmp(inf.passwords, password) == 0) {
 					cout << "Log in succeded \n";
 					break;
 				}
 			}
-			if (strcmp(inf.names, username) != 0) {
-				//x = 1;
+			x = 1;
+			if (x == 1)
 				cout << "Log in failed \n";
-				break;
-			}
+			break;
 		}
-		//std::getline(std::cin, names);
-
-
 		cout << "Do you want to try again \n";
 		cin >> again;
 	} while (again == "yes" || again == "Yes");
 }
 
 void start() {
-	string username, password, response, exit;
-	cout << "Hello! Are you a Doctor or a Patient ? \n";
+	string username, password, response, exit;      //remove username & password (no need)
+	cout << "Hello! Are you a Doctor(D/d) or a Patient(P/p) ? \n";
 	cin >> response;
 	do
 	{
-		if (response == "doctor" || response == "Doctor") {
+		if (response == "d" || response == "D") {
 			account();
-			cout << "Do you want to exit \n";
+			cout << "Do you want to exit(N/n) \n";
 			cin >> exit;
 		}
-	} while (exit == "No" || exit == "no");
+	} while (exit == "N" || exit == "n");
 	do {
-		if (response == "patient" || response == "Patient") {
-			account(); cout << "Do you want to exit \n"; cin >> exit;
+		if (response == "p" || response == "P") {
+			account_patient(); cout << "Do you want to exit(N/n) \n"; cin >> exit;
 		}
-	} while (exit == "No" || exit == "no");
+	} while (exit == "N" || exit == "n");
+}
+
+void account_patient()
+{
+	string acc;
+	cout << "Do you have an account ? \n";
+	cin >> acc;
+	if (acc == "Yes" || acc == "yes") {
+		sign_in_patient();
+	}
+	if (acc == "No" || acc == "no") {
+		sign_up_patient();
+
+	}
+}
+
+void sign_in_patient() {
+	string again;
+	do {
+		char username[50], password[50];
+		fstream info;
+		info.open("patient info.txt", ios::in);
+		cout << "Please enter your username\n";
+		cin.ignore();
+		cin.getline(username, 50);
+		cout << "Please enter your password \n";
+		cin.getline(password, 50);
+		int x = 0;
+		while (!info.eof()) {
+			info.getline(inf.names, 50, '|');
+			if (strcmp(inf.names, username) == 0) {
+				info.getline(inf.passwords, 50, '|');
+				if (strcmp(inf.passwords, password) == 0) {
+					cout << "Log in succeded \n";
+					break;
+				}
+			}
+			x = 1;
+			if (x == 1)
+				cout << "Log in failed \n";
+			break;
+
+		}
+		cout << "Do you want to try again \n";
+		cin >> again;
+	} while (again == "yes" || again == "Yes");
+}
+
+void sign_up_patient() {
+	string again;
+	cout << " Let's create a new email for you. \n";
+	fstream info;
+	info.open("patient info.txt", ios::app);
+	cout << " Please enter your  First Name \n";
+	cin.ignore();
+	cin.getline(inf.names, 50);
+	cout << "Please enter your Password \n";
+	cin.getline(inf.passwords, 50);
+	cout << "Please enter you phone number \n";
+	cin.getline(inf.numbers, 50);
+	cout << " Please enter your Age \n";
+	cin >> inf.ages;
+	info << inf.names << '|' << inf.passwords << '|' << inf.ages << '|' << inf.numbers << "\n";
+	cout << "Created successfully \n";
+	do {
+		string username, password;
+		cout << "Now please enter your username \n";
+		cin >> username;
+		cout << "Now please enter your password \n";
+		cin >> password;
+		if (inf.names == username && inf.passwords == password) {
+			cout << "Log in succescded   ";			break;
+
+		}
+		if (inf.names != username || inf.passwords != password) {
+			cout << "Log in failed! Please try again  ";			break;
+
+		}
+		cout << "Do you want to try again \n";
+		cin >> again;
+	} while (again == "yes" || again == "Yes");
 }
