@@ -54,6 +54,7 @@ struct info_doctor {
 void sign_up();
 void sign_in();
 void start();
+void account();
 
 // menus
 void doctorMenu(doctor darr[], int doctorIndex);
