@@ -75,9 +75,9 @@ void findDoctor(doctor darr[], patient parr[], int patientIndex);
 void timeFilter(doctor darr[], patient parr[], int patientIndex, int* result, int resultSize);
 
 // Safa
-void displayPatientAppointments(appointment applist[], int i);
+void displayPatientAppointments(patient Parr[], int patienIndex);
 void editPatientInfo(patient parr[], doctor darr[], int patientIndex);
-void clearAppointments(appointment applist[], int i);
+void clearAppointments(patient Parr[], int patienIndex);
 
 // Seif
 void addAppointment(doctor darr[], patient parr[], int patientIndex, int docIndex);
@@ -103,7 +103,7 @@ int main() {
 	patient parr[patientLimit];
 	start();
 	darr[0].name = "mayar";
-	darr[0].password ="128";
+	darr[0].password = "128";
 	darr[0].major = "dentist";
 
 
@@ -197,7 +197,7 @@ void patientMenu(patient parr[], doctor darr[], int patientIndex) {  // parr -> 
 			cin >> appointmentService;
 
 			if (appointmentService == '1') {
-				displayPatientAppointments(parr[patientIndex].Pappointments, patientIndex);
+				displayPatientAppointments(parr, patientIndex);
 			}
 			else if (appointmentService == '2') {
 				editAppointment(darr, parr, patientIndex);
@@ -273,7 +273,7 @@ void editAvailableTime(doctor darr[], int doctorIndex)
 	}
 }
 
-void addAvailableTime(doctor darr[], int doctorIndex)
+void AddAvailableTime(doctor darr[], int doctorIndex)
 {
 	char another = 'y';
 	cout << "\t\t\t\t------------------------\n\t\t\twelcome\n to *add* a new available time just follow the following instructions\n";
@@ -304,7 +304,7 @@ void addAvailableTime(doctor darr[], int doctorIndex)
 	} while (another == 'y' || another == 'Y');
 }
 
-void RemoveAvailableTime(doctor darr[], int doctorIndex)
+void RemoveAvailabeTime(doctor darr[], int doctorIndex)
 {
 	timeStruct Delete;
 	char another = 'y';
@@ -946,7 +946,7 @@ void clearAppointment(patient Parr[], int patienIndex) {
 		Parr[patienIndex].Pappointments[i].time.minute = 0;
 		Parr[patienIndex].Pappointments[i].time.Available = true;
 		Parr[patienIndex].Pappointments[i].time.date.day = 0;
-		Parr[patienIndex].Pappointments[i].time.date.month = 0;   //مش هنساوي السنة بصفر عشان هي 2022
+		Parr[patienIndex].Pappointments[i].time.date.month = 0;   //?? ?????? ????? ???? ???? ?? 2022
 		Parr[patienIndex].Pappointments[i].doctorName = "-1";
 		Parr[patienIndex].Pappointments[i].patientName = "-1";
 
@@ -956,7 +956,7 @@ void clearAppointment(patient Parr[], int patienIndex) {
 
 void account()
 {
-	
+
 	string acc;
 	cout << "Do you have an account(y for yes / n for no)  ? \n";
 	cin >> acc;
