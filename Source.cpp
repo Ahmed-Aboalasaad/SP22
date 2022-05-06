@@ -16,52 +16,42 @@ struct dateStruct
 		month = 0,
 		year = 2022;
 };
-
 struct timeStruct
 {
 	bool Available = true;
 	dateStruct date;
 	int hour = 0, minute = 0;
 };
-
 struct appointment
 {
 	string patientName, doctorName;
 	timeStruct time;
 };
-
 struct patient
 {
 	string name, password;
 	dateStruct DOB;
 	appointment Pappointments[20];
 };
-
 struct doctor
 {
 	string name, password, major;
 	appointment DRappointments[20];
 	timeStruct availableTime[20];
 };
-
-struct info_doctor {
-	char names[25], numbers[25], passwords[25], majors[25];
-	int ages;
+struct info {
+	char names[50], numbers[50], passwords[50], ages[50];
 }inf;
-
-
 
 // FUNCTIONS prototypes
 // Gehad
-void sign_in_patient();
-void account_patient();
-void sign_up_patient();
-void account();
-void sign_up();
-void start();
-void sign_in();
-
-
+void logInDoctor(doctor darr[]);
+void log_in_patient(patient parr[], doctor darr[]);
+void account_patient(patient parr[], doctor darr[]);
+void sign_up_patient(patient parr[], doctor darr[]);
+void accountDoctor(doctor darr[]);
+void signUpDoctor(doctor darr[]);
+void start(doctor darr[], patient parr[]);
 
 // menus
 void doctorMenu(doctor darr[], int doctorIndex);
@@ -94,18 +84,13 @@ void AddAvailableTime(doctor darr[], int doctorIndex);
 void RemoveAvailabeTime(doctor darr[], int doctorIndex);
 
 //------------------------------------------------------------------------------
-
 int main() {
 
 	// Loading data from files
 
 	doctor darr[doctorLimit];
 	patient parr[patientLimit];
-	start();
-	darr[0].name = "mayar";
-	darr[0].password = "128";
-	darr[0].major = "dentist";
-
+	start(darr, parr);
 
 	return 0;
 } // END MAIN
@@ -173,7 +158,6 @@ void doctorMenu(doctor darr[], int doctorIndex)
 
 
 }
-
 void patientMenu(patient parr[], doctor darr[], int patientIndex) {  // parr -> array of patients & i -> index in that array
 	// which service ?
 	cout << "1. Find a doctor" << endl     // Abo
@@ -272,7 +256,6 @@ void editAvailableTime(doctor darr[], int doctorIndex)
 		}
 	}
 }
-
 void AddAvailableTime(doctor darr[], int doctorIndex)
 {
 	char another = 'y';
@@ -303,7 +286,6 @@ void AddAvailableTime(doctor darr[], int doctorIndex)
 		cin >> another;
 	} while (another == 'y' || another == 'Y');
 }
-
 void RemoveAvailabeTime(doctor darr[], int doctorIndex)
 {
 	timeStruct Delete;
@@ -352,7 +334,6 @@ void RemoveAvailabeTime(doctor darr[], int doctorIndex)
 		cin >> another;
 	} while (another == 'y' || another == 'Y');
 }
-
 void displayDoctorAppointment(doctor darr[], int doctorIndex)
 {
 
@@ -457,7 +438,6 @@ void findDoctor(doctor darr[], patient parr[], int patientIndex) {
 
 	// improve the intelligence of your search later ,dude!
 }
-
 void timeFilter(doctor darr[], patient parr[], int patientIndex, int* result, int resultSize) {
 	// what's your desired time for your appointment
 	timeStruct timeHolder;
@@ -483,7 +463,7 @@ void timeFilter(doctor darr[], patient parr[], int patientIndex, int* result, in
 
 	// now, print the doctors any value other than -1
 	int counter = 1;
-	cout << "\n--------After Filteration--------\n"
+	cout << "\n-------- After Filteration --------\n"
 		<< "Id\t\tName";
 	for (int i = 0; i < resultSize; i++) {
 		if (result[i] != -1) {
@@ -497,7 +477,6 @@ void timeFilter(doctor darr[], patient parr[], int patientIndex, int* result, in
 
 	addAppointment(darr, parr, patientIndex, doctorID, timeHolder);
 }
-
 void addAppointment(doctor darr[], patient parr[], int patientIndex, int docIndex) {
 	// 1. get number of appointments booked by patient so we can add on an empty index.
 	// 2. choose available time.
@@ -563,7 +542,6 @@ void addAppointment(doctor darr[], patient parr[], int patientIndex, int docInde
 
 	cout << "Appointment added successfully" << endl;
 }
-
 void addAppointment(doctor darr[], patient parr[], int patientIndex, int docIndex, timeStruct timeHolder) {
 	//getting number of booked appointments so we can add up on an empty index.
 	int counter;
@@ -603,7 +581,6 @@ void addAppointment(doctor darr[], patient parr[], int patientIndex, int docInde
 
 	cout << "Appointment added successfully" << endl;
 }
-
 void editAppointment(doctor darr[], patient parr[], int patientIndex) {
 	// 1. get patient appointments count.
 	// 1. show the patient all his booked appointments (from all doctors)
@@ -712,7 +689,6 @@ void editAppointment(doctor darr[], patient parr[], int patientIndex) {
 
 	cout << "Appointment edited successfully\n";
 }
-
 void deleteAppointments(doctor darr[], patient parr[], int patientIndex) {
 	int counter;
 	for (int i = 0; i < 20; i++) {
@@ -789,8 +765,6 @@ void deleteAppointments(doctor darr[], patient parr[], int patientIndex) {
 
 	cout << "Appointment canceled successfully\n";
 }
-
-
 void editDoctorInfo(doctor darr[], int doctorIndex)
 {
 	// Variable used to asssign editing the username or password
@@ -859,7 +833,6 @@ void editDoctorInfo(doctor darr[], int doctorIndex)
 
 	}
 }
-
 void editPatientInfo(patient parr[], doctor darr[], int patientIndex) {
 	char response;
 	cout << "Want to edit your data? We're here for help\n";
@@ -929,7 +902,6 @@ void editPatientInfo(patient parr[], doctor darr[], int patientIndex) {
 	}
 
 }
-
 void displayPatientAppointments(patient Parr[], int patienIndex) {
 	cout << "Your Appointments\n";
 	for (int i = 0; i < 50; i++) {
@@ -954,6 +926,194 @@ void clearAppointment(patient Parr[], int patienIndex) {
 }
 //_______________________________________________________
 
+void accountDoctor(doctor darr[])
+{
+	string response;
+	cout << "Do you have an account ? \n";
+	cin >> response;
+	if (response == "Yes" || response == "yes" || response == "y" || response == "Y") {
+		logInDoctor(darr);
+	}
+	if (response == "No" || response == "no" || response == "n" || response == "N") {
+		signUpDoctor(darr);
+
+	}
+}
+void signUpDoctor(doctor darr[])
+{ 
+	string again;
+	cout << " Let's create a new email for you. \n";
+	fstream infoFile;
+	infoFile.open("doctor info.txt", ios::app);
+	cout << " Please enter your  First Name \n";
+	cin.ignore();
+	cin.getline(inf.names, 50);
+	cout << "Please enter your Password \n";
+	cin.getline(inf.passwords, 50);
+	cout << "Please enter you phone number \n";
+	cin.getline(inf.numbers, 50);
+	cout << " Please enter your Age \n";
+	cin.getline(inf.ages, 50);
+	infoFile << inf.names << '|' << inf.passwords << '|' << inf.ages << '|' << inf.numbers << "\n";
+	cout << "Created successfully \n";
+
+	do {
+		string username, password;
+		cout << "Now please enter your username \n";
+		cin >> username;
+		cout << "Now please enter your password \n";
+		cin >> password;
+		if (inf.names == username && inf.passwords == password) {
+			cout << "Log in succescded   ";			
+			break;
+
+		}
+		if (inf.names != username || inf.passwords != password) {
+			cout << "Log in failed! Please try again  ";			break;
+
+		}
+		cout << "Do you want to try again \n";
+		cin >> again;
+	} while (again == "yes" || again == "Yes");
+
+
+}
+void logInDoctor(doctor darr[]) {
+	string response;
+	do {
+		char username[50], password[50];
+		fstream infoFile;
+		infoFile.open("doctor info.txt", ios::in);
+		cout << "Please enter your username\n";
+		cin.ignore();
+		cin.getline(username, 50);
+		cout << "Please enter your password \n";
+		cin.getline(password, 50);
+
+		bool found = false;
+		while (!infoFile.eof()) {
+			infoFile.getline(inf.names, 50, '|');
+			infoFile.getline(inf.passwords, 50, '|');
+			infoFile.getline(inf.ages, 50, '|');
+			infoFile.getline(inf.numbers, 50);
+			if (strcmp(inf.names, username) == 0) {
+				if (strcmp(inf.passwords, password) == 0) {
+					cout << "Log in succeded \n";
+					for (int i = 0; i < doctorLimit; i++) {
+						if (username == darr[i].name) {
+							doctorMenu(darr, i);
+						}
+					}
+					found = true;
+					break;
+				}
+
+			}
+		}
+		if (!found)
+			cout << "Log in failed \n";
+		cout << "Do you want to try again \n";
+		cin >> response;
+	} while (response == "yes" || response == "Yes" || response == "Y" || response == "y");
+}
+void start(doctor darr[], patient parr[]) {
+	//saying hi
+	cout << "----------- Welcome To E7gzly -----------\n";
+
+	//doctor Or patient
+	string username, password, response, exit;
+	cout << "Hello! Are you a Doctor or a Patient ? \n";
+	cin >> response;
+
+	do {
+		if (response == "doctor" || response == "Doctor") {
+			accountDoctor(darr);
+			cout << "Do you want to exit \n";
+			cin >> exit;
+		}
+	} while (exit == "No" || exit == "no");
+
+	do {
+		if (response == "patient" || response == "Patient") {
+			account_patient(parr, darr);
+			cout << "Do you want to exit \n"; cin >> exit;
+		}
+	} while (exit == "No" || exit == "no");
+}
+void account_patient(patient parr[], doctor darr[])
+{
+	string acc;
+	cout << "Do you have an account ? \n";
+	cin >> acc;
+	if (acc == "Yes" || acc == "yes") {
+		log_in_patient(parr, darr);
+	}
+	if (acc == "No" || acc == "no") {
+		sign_up_patient(parr, darr);
+
+	}
+}
+void log_in_patient(patient parr[], doctor darr[]) {
+	string response;
+	do {
+		char username[50], password[50];
+		fstream info;
+		info.open("patient info.txt", ios::in);
+		cout << "Please enter your username\n";
+		cin.ignore();
+		cin.getline(username, 50);
+		cout << "Please enter your password \n";
+		cin.getline(password, 50);
+
+		bool found = false;
+		while (!info.eof()) {
+			info.getline(inf.names, 50, '|');
+			info.getline(inf.passwords, 50, '|');
+			info.getline(inf.ages, 50, '|');
+			info.getline(inf.numbers, 50);
+			if (strcmp(inf.names, username) == 0) {
+				if (strcmp(inf.passwords, password) == 0) {
+					cout << "Log in succeded \n";
+					for (int i = 0; i < patientLimit; i++) {
+						if (username == parr[i].name) {
+							patientMenu(parr, darr, i);
+						}
+					}
+					found = true;
+					break;
+				}
+
+			}
+		}
+		if (!found)
+			cout << "Log in failed \n";
+		cout << "Do you want to try again \n";
+		cin >> response;
+	} while (response == "yes" || response == "Yes" || response == "Y" || response == "y");
+}
+void sign_up_patient(patient parr[], doctor darr[]) {
+	string again;
+	cout << " Let's create a new email for you. \n";
+	fstream info;
+	info.open("patient info.txt", ios::app);
+	cout << " Please enter your  First Name \n";
+	cin.ignore();
+	cin.getline(inf.names, 50);
+	cout << "Please enter your Password \n";
+	cin.getline(inf.passwords, 50);
+	cout << "Please enter you phone number \n";
+	cin.getline(inf.numbers, 50);
+	cout << " Please enter your Age \n";
+	cin >> inf.ages;
+	info << inf.names << '|' << inf.passwords << '|' << inf.ages << '|' << inf.numbers << "\n";
+	cout << "Created successfully \n";
+	
+	log_in_patient(parr, darr);
+
+}
+
+
+/*
 void account()
 {
 
@@ -970,7 +1130,6 @@ void account()
 
 
 }
-
 void sign_up()
 {
 	string again;
@@ -1007,7 +1166,6 @@ void sign_up()
 	} while (again == "yes" || again == "Yes");
 
 }
-
 void sign_in() {
 	string again;
 	do {
@@ -1038,7 +1196,6 @@ void sign_in() {
 		cin >> again;
 	} while (again == "yes" || again == "Yes");
 }
-
 void start() {
 	string username, password, response, exit;      //remove username & password (no need)
 	cout << "Hello! Are you a Doctor(D/d) or a Patient(P/p) ? \n";
@@ -1057,7 +1214,6 @@ void start() {
 		}
 	} while (exit == "N" || exit == "n");
 }
-
 void account_patient()
 {
 	string acc;
@@ -1071,7 +1227,6 @@ void account_patient()
 
 	}
 }
-
 void sign_in_patient() {
 	string again;
 	do {
@@ -1103,7 +1258,6 @@ void sign_in_patient() {
 		cin >> again;
 	} while (again == "yes" || again == "Yes");
 }
-
 void sign_up_patient() {
 	string again;
 	cout << " Let's create a new email for you. \n";
@@ -1138,3 +1292,4 @@ void sign_up_patient() {
 		cin >> again;
 	} while (again == "yes" || again == "Yes");
 }
+*/
