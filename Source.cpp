@@ -4,7 +4,7 @@ every major has a time for the appointment
 ascii intro
 all dynamic arrays
 a function to generate random data to the files
-*/
+*/ 
 
 #include <iostream>
 #include <fstream>
