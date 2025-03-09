@@ -1,4 +1,4 @@
-# SP22
+# E7gzly
 The "structured programming" course project for Faculty of Computer and Information Sciences, Ain Shams University (spring 2022)
 
 "E7gzly" is a doctor appointment booking system made with C++ 
